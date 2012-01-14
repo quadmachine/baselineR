@@ -41,6 +41,7 @@ html, body{
 }
 
 #baseline-controls{
+	height: 22px;
 	padding: 5px;
 	position: fixed;
 	top: 35px;
@@ -50,4 +51,14 @@ html, body{
 	border-radius: 4px;
 	z-index: 999;
 	box-shadow: 0 0 5px #000;
+}
+#baseline-controls select{
+	height: 18px;
+	float: left;
+}
+#hide-baseline{
+	height: 16px;
+	padding: 1px 0 1px 3px;
+	display: block;
+	float: left;
 }

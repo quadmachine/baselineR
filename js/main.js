@@ -1,6 +1,6 @@
 (function(){
 function baseline_me(){
-	var baseline_controls = '<div id="baseline-controls"><select id="baseline-color"><option>magenta</option><option>green</option><option>black</option><option>white</option></select><select id="baseline-height"><option>18</option><option>22</option></select><a id="hide-baseline" href="#">Close</a></div>';
+	var baseline_controls = '<div id="baseline-controls"><select id="baseline-color"><option>magenta</option><option>green</option><option>black</option><option>white</option></select><select id="baseline-height"><option>18</option><option>22</option></select><a id="hide-baseline" href="#"><img src="http://mladenpanic.com/baseliner/img/icon-close.png" alt="Close baselineR" /></a></div>';
 	$('body').append(baseline_controls);
 }
 baseline_me();
