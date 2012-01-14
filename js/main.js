@@ -1,7 +1,19 @@
+(function(){
+function baseline_me(){
+	var baseline_controls = '<div id="baseline-controls"><select id="baseline-color"><option>magenta</option><option>green</option><option>black</option><option>white</option></select><select id="baseline-height"><option>18</option><option>22</option></select><a id="hide-baseline" href="#">Close</a></div>';
+	$('body').append(baseline_controls);
+}
+baseline_me();
+
 function baselineOverlay(blh,bClr){//prima blh (baseline height) i bClr (baseline color, CSS notacija)
 	//defaultna visina i boja
-	blh = typeof(blh) != 'undefined' ? blh : 18;
-	bClr = typeof(bClr) != 'undefined' ? bClr : "#a3e2f5";
+//	blh = typeof(blh) != 'undefined' ? blh : 18;
+//	bClr = typeof(bClr) != 'undefined' ? bClr : "#a3e2f5";
+	var blh = parseInt($('#baseline-height').val());
+	var bClr = $('#baseline-color').val();	
+	if ('#baseline-overlay'){
+		$('#baseline-overlay').remove();
+	}	
 	function windowSize(){//racuna dimenzije browsera, rjesiti da se ovo radi na resize
 		winW = window.innerWidth;
 		function getDocHeight() {
@@ -34,10 +46,13 @@ function baselineOverlay(blh,bClr){//prima blh (baseline height) i bClr (baselin
 
 	windowSize();    
 	$('body').append('<div id="baseline-overlay"><canvas width="'+winW+'" height="'+winH+'" id="baseline"></canvas></div>');
-	$('#baseline-overlay').css({width: "100%", "overflow": "hidden"});		    
+	$('#baseline-overlay').css({width: "100%", position: 'absolute', left: 0, top: 0, 'pointer-events': 'none', 'z-index': 998, "overflow": "hidden"});
+	console.log(blh);
+	console.log(bClr);		    
 	draw(blh, bClr);
 
 }
+/*
 function gridOverlay(gWidth,gColumns,gClr){
 	//defaultna sirina i boja
 	gWidth = typeof(gWidth) != 'undefined' ? gWidth : 960;
@@ -66,34 +81,14 @@ function gridOverlay(gWidth,gColumns,gClr){
 	}
 	draw(gColumns);
 } 
+*/
+baselineOverlay();
+$('#baseline-controls').find('select').change(function(){
+	baselineOverlay();
+});
+$('#hide-baseline').live("click", function(e) {
+	e.preventDefault();
+	$('#baseline-overlay, #baseline-controls').remove();
+});
 
-$(document).ready( function() {
-isus = 0;
-bog = 0;
-	$(document).keydown(function (event) {
-	    if (event.keyCode == '66') {
-	        event.preventDefault();
-			if (isus==0){
-				baselineOverlay();//napraviti da se moze upisati samo jedan argument, npr boja i da to radi
-				isus = 1;
-			}
-			else{
-				$('#baseline-overlay').remove();
-				isus = 0;
-			}
-			
-	    }
-	    else if (event.keyCode == '71') {
-			event.preventDefault();		
-			if (bog==0){	
-				gridOverlay();
-				bog = 1;
-			}
-			else{
-				$('#grid-overlay').remove();
-				bog = 0;
-			}
-	    	
-	    }
-	});
-});//doc ready end
+})();
