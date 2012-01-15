@@ -1,57 +1,29 @@
 (function(){
-function baseline_me(){
-	var baseline_controls = '<div id="baseline-controls"><select id="baseline-color"><option>magenta</option><option>green</option><option>black</option><option>white</option></select><select id="baseline-height"><option>18</option><option>22</option></select><a id="hide-baseline" href="#"><img src="http://mladenpanic.com/baseliner/img/icon-close.png" alt="Close baselineR" /></a></div>';
-	$('body').append(baseline_controls);
+
+var css_file = 'http://mladenpanic.com/baseliner/css/style.css';
+
+function include_css(filename) {
+	var css = document.createElement('link');
+
+	css.setAttribute('rel', 'stylesheet');
+	css.setAttribute('href', filename);
+	css.setAttribute('type', 'text/css');
+
+	document.getElementsByTagName('head')[0].appendChild(css);
 }
-baseline_me();
-
-function baselineOverlay(blh,bClr){//prima blh (baseline height) i bClr (baseline color, CSS notacija)
-	//defaultna visina i boja
-//	blh = typeof(blh) != 'undefined' ? blh : 18;
-//	bClr = typeof(bClr) != 'undefined' ? bClr : "#a3e2f5";
-	var blh = parseInt($('#baseline-height').val());
-	var bClr = $('#baseline-color').val();	
-	if ('#baseline-overlay'){
-		$('#baseline-overlay').remove();
-	}	
-	function windowSize(){//racuna dimenzije browsera, rjesiti da se ovo radi na resize
-		winW = window.innerWidth;
-		function getDocHeight() {
-	    var D = document;
-	    return Math.max(
-	        Math.max(D.body.scrollHeight, D.documentElement.scrollHeight),
-	        Math.max(D.body.offsetHeight, D.documentElement.offsetHeight),
-	        Math.max(D.body.clientHeight, D.documentElement.clientHeight)
-	    );
-		}	
-		winH = getDocHeight();
-		lines = Math.floor(winH/blh);//ukupan broj linija koji ce iscrtati
-	}
-	function draw(blh, bClr) {//prima blh (baseline height) i bClr (baseline color, CSS notacija)
-	      var canvas = document.getElementById("baseline");
-	      if (canvas.getContext) {
-	        var ctx = canvas.getContext("2d");//daje kontekst canvasu da mozemo raditi s njim
-			ctx.lineWidth=1;//debljina linije
-			ctx.strokeStyle=bClr;//boja linije
-			blStart = 0.5;//offset da se ispravno rendaju linije od 0.5px
-			for (var i=blStart;i<lines;i++){//crta koliko treba linija
-				blStart = blStart+blh;
-				ctx.beginPath();  
-				ctx.moveTo(0,blStart);  
-				ctx.lineTo(winW,blStart);
-				ctx.stroke();  
-			}
-	      }  
-	} 
-
-	windowSize();    
-	$('body').append('<div id="baseline-overlay"><canvas width="'+winW+'" height="'+winH+'" id="baseline"></canvas></div>');
-	$('#baseline-overlay').css({width: "100%", position: 'absolute', left: 0, top: 0, 'pointer-events': 'none', 'z-index': 998, "overflow": "hidden"});
-	console.log(blh);
-	console.log(bClr);		    
-	draw(blh, bClr);
-
+include_css(css_file);
+	
+function add_baseline_controls(){
+	var baseline_controls = document.createElement('div');
+	
+	baseline_controls.setAttribute('id', 'baseline-controls');
+	baseline_controls.innerHTML = '<select onchange="baselineOverlay();" id="baseline-color"><option>magenta</option><option>green</option><option>black</option><option>white</option></select><select onchange="baselineOverlay();" id="baseline-height"><option>18</option><option>22</option></select><a id="hide-baseline" href="#"><img src="http://mladenpanic.com/baseliner/img/icon-close.png" alt="Close baselineR" /></a>';
+	
+	document.body.appendChild(baseline_controls);
 }
+add_baseline_controls();
+
+
 /*
 function gridOverlay(gWidth,gColumns,gClr){
 	//defaultna sirina i boja
@@ -83,12 +55,78 @@ function gridOverlay(gWidth,gColumns,gClr){
 } 
 */
 baselineOverlay();
-$('#baseline-controls').find('select').change(function(){
-	baselineOverlay();
-});
+
+/*
 $('#hide-baseline').live("click", function(e) {
 	e.preventDefault();
 	$('#baseline-overlay, #baseline-controls').remove();
 });
+*/
+
+var $hide_baseline = document.getElementById('hide-baseline');
+/* var $baseline_controls = document.getElementById('baseline-controls'); */
+	$hide_baseline.addEventListener("click", function(e) {
+		
+		document.body.removeChild(document.getElementById('baseline-controls'));
+		document.body.removeChild(document.getElementById('baseline-overlay'));		
+		e.preventDefault();
+	});
 
 })();
+function baselineOverlay(baseline_height,baseline_color){//prima baseline_height (baseline height) i baseline_color (baseline color, CSS notacija)
+	//defaultna visina i boja
+//	baseline_height = typeof(baseline_height) != 'undefined' ? baseline_height : 18;
+//	baseline_color = typeof(baseline_color) != 'undefined' ? baseline_color : "#a3e2f5";
+	var $baseline_height = document.getElementById('baseline-height');
+	var $baseline_color = document.getElementById('baseline-color');	
+
+	var baseline_height = parseInt($baseline_height.options[$baseline_height.selectedIndex].text);
+	var baseline_color = $baseline_color.options[$baseline_color.selectedIndex].text;
+	
+	if (document.getElementById('baseline-overlay')){
+		var $baseline_overlay = document.getElementById('baseline-overlay');
+		document.body.removeChild($baseline_overlay);
+	}	
+	function windowSize(){//racuna dimenzije browsera, rjesiti da se ovo radi na resize
+		winW = window.innerWidth;
+		function getDocHeight() {
+	    var D = document;
+	    return Math.max(
+	        Math.max(D.body.scrollHeight, D.documentElement.scrollHeight),
+	        Math.max(D.body.offsetHeight, D.documentElement.offsetHeight),
+	        Math.max(D.body.clientHeight, D.documentElement.clientHeight)
+	    );
+		}	
+		winH = getDocHeight();
+		lines = Math.floor(winH/baseline_height);//ukupan broj linija koji ce iscrtati
+	}
+	function draw(baseline_height, baseline_color) {//prima baseline_height (baseline height) i baseline_color (baseline color, CSS notacija)
+	      var canvas = document.getElementById("baseline");
+	      if (canvas.getContext) {
+	        var ctx = canvas.getContext("2d");//daje kontekst canvasu da mozemo raditi s njim
+			ctx.lineWidth=1;//debljina linije
+			ctx.strokeStyle=baseline_color;//boja linije
+			blStart = 0.5;//offset da se ispravno rendaju linije od 0.5px
+			for (var i=blStart;i<lines;i++){//crta koliko treba linija
+				blStart = blStart+baseline_height;
+				ctx.beginPath();  
+				ctx.moveTo(0,blStart);  
+				ctx.lineTo(winW,blStart);
+				ctx.stroke();  
+			}
+	      }  
+	} 
+
+	windowSize();    
+
+	var baseline_overlay = document.createElement('div');
+	
+	baseline_overlay.setAttribute('id', 'baseline-overlay');
+	baseline_overlay.innerHTML = '<canvas width="'+winW+'" height="'+winH+'" id="baseline"></canvas>';	
+	document.body.appendChild(baseline_overlay);
+
+	console.log(baseline_height);
+	console.log(baseline_color);		    
+	draw(baseline_height, baseline_color);
+
+}
